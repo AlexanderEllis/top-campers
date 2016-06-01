@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Top 100 Free Code Campers</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+  </head>
+  <body style="text-align:center">
+    <div id = "fixed">
+      <h1 >Top 100 Free Code Campers</h1>
+      <p>Top 100 Free Code Campers written with React.js.</p>
+      <div id = "titles" class = "row">
+        <div class = "rank">Rank</div>
+        <div class = "username">Username</div>
+        <div class = "last-30">Last 30 Days</div>
+        <div class = "all-time">All-time</div>
+      </div>
+    </div>
+
+    <div id="leaderboard">
+      <div id = "react-receiver">
+        <div id = "loading">Loading...</div>
+      </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.js"></script>
+
+    <script type="text/babel">
+      var list, value;
+      var test = [{name: "Alex"}, {name: "Andrew"}];
+      var key = 1;
+      $.ajax({
+        dataType: "json",
+        url: "https://fcctop100.herokuapp.com/api/fccusers/top/recent",
+        success: function(data) {
+            list = data;
+            console.log("JSON Successfully Called");
+            ReactDOM.render(
+              <TestDiv data={data} />,
+              document.getElementById('react-receiver')
+            );
+            key ++;
+        }
+      });
+
+      var TestDiv = React.createClass({
+
+        render: function() {
+          return (
+            <div>{
+              this.props.data.map(function(data) {
+                key = (list.indexOf(data)) + 1;
+                let classtype = "class-" + key % 2 + " row";
+                console.log(list[key - 1]);
+                return (
+                  <div key={key} className = {classtype}>
+                    <div className = "rank">{key}</div>
+                    <div className = "username"><img src = {data.img}/>&nbsp;{data.username}</div>
+                    <div className = "last-30">{data.recent}</div>
+                    <div className = "all-time">{data.alltime}</div>
+                  </div>
+                );
+              })
+            }
+            </div>
+          );
+        }
+      });
+
+      var preview = "";
+      var MarkdownPreviewer = React.createClass({
+
+        getInitialState: function() {
+          return {value: 'Enter Markdown here!'};
+        },
+
+        handleChange: function(event) {
+          this.setState({value: event.target.value});
+          preview = event.target.value;
+        },
+
+        createMarkup: function() {
+          return {__html: marked(preview, {sanitize: true})};
+        },
+
+        render: function() {
+          return (
+            <div>
+            <textarea
+            rows="4" cols="50"
+            value={this.state.value}
+            onChange={this.handleChange}
+            style={{"width": "40%"}}
+            >
+            </textarea>
+            <div dangerouslySetInnerHTML={this.createMarkup()}
+            style={{"width": "60%", "margin": "0 auto", "textAlign": "left"}}/>
+            </div>
+    );
+  }
+      });
+
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+  </body>
+</html>
